@@ -56,6 +56,42 @@ function checkLevelUp(){
     player.xpToNext = Math.floor(player.xpToNext * 1.5);
 
     log(`You leveled up to level ${player.level}! +1 Attack, +5 Max HP!`);
+    showLevelUpAnimation();
+    spawnParticles();
+  }
+}
+
+function showLevelUpAnimation() {
+  const popup = document.getElementById('level-up-popup');
+  popup.classList.add("show");
+  popup.classList.remove("hidden");
+
+  setTimeout(() => {
+    popup.classList.remove("show");
+    popup.classList.add("hidden");
+  }, 1800);
+}
+
+function spawnParticles(count = 12) {
+  const container = document.getElementById("level-up-particles");
+  const containerRect = container.getBoundingClientRect();
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.textContent = "✨";
+
+    const x = Math.random() * containerRect.width;
+    const y = Math.random() * containerRect.height * 0.6 + containerRect.height * 0.2;
+
+    p.style.position = "absolute";
+    p.style.left = `${x}px`;
+    p.style.top = `${y}px`;
+    p.style.fontSize = `${Math.random() * 1.5 + 1}rem`;
+    p.style.animationDuration = `${Math.random() * 0.5 + 0.8}s`;
+
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 1500);
   }
 }
 
