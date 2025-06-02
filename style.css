@@ -169,6 +169,44 @@ header {
   font-size: 1rem;
 }
 
+#run-summary {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.summary-box {
+  background: #1f1f1f;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  color: #eee;
+  max-width: 300px;
+  width: 90%;
+  box-shadow: 0 0 20px #000;
+}
+
+#run-stats-list {
+  text-align: left;
+  margin: 1rem 0;
+}
+
+#run-stats-list li {
+  margin-bottom: 0.5rem;
+}
+
+#new-run-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
 .hidden {
   display: none !important;
 }

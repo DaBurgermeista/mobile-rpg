@@ -17,6 +17,12 @@ const restBtn = document.getElementById('rest-button');
 
 let currentEnemy = null;
 let selectedItemIndex = null;
+let runStats = {
+  turns: 0,
+  kills: 0,
+  itemsUsed: 0,
+  xpEarned: 0,
+};
 
 function updateUI() {
   levelEl.textContent = player.level;
@@ -40,9 +46,10 @@ function log(message) {
 fightBtn.addEventListener("click", () => {
   const enemyTemplate = enemies[Math.floor(Math.random() * enemies.length)];
   currentEnemy = { ...enemyTemplate }; // Clone
-  
-  log(`A wild ${currentEnemy.name} appears!`);
+  // runStats.turns++;
+  log(`A wild ${currentEnemy.name} appears!\n\n${currentEnemy.flavor}`);
   attackBtn.disabled = false;
+  fightBtn.disabled = true;
   updateUI();
 });
 
@@ -141,6 +148,7 @@ function useItem(index) {
     player.hp += amount;
     log(`🩹 You used ${item.name} and recovered ${amount} HP.`);
     showFloatingText(`+${amount} HP`, "heal");
+    runStats.itemsUsed += 1;
   }
 
   entry.quantity -= 1;
@@ -151,6 +159,30 @@ function useItem(index) {
   updateUI();
   updateInventory();
 }
+
+function showRunSummary() {
+  const summaryModal = document.getElementById("run-summary");
+  const statsList = document.getElementById("run-stats-list");
+
+  statsList.innerHTML = "";
+
+  Object.entries(runStats).forEach(([key, value]) => {
+    const li = document.createElement("li");
+    const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+    li.textContent = `${label}: ${value}`;
+    statsList.appendChild(li);
+  });
+
+  const score = calculateScore(runStats);
+  const scoreLi = document.createElement("li");
+  scoreLi.textContent = `Score: ${score}`;
+  scoreLi.style.marginTop = "1rem";
+  scoreLi.style.fontWeight = "bold";
+  statsList.appendChild(scoreLi);
+
+  summaryModal.classList.remove("hidden");
+}
+
 
 document.getElementById("close-item-btn").addEventListener("click", () => {
   document.getElementById("item-detail").classList.add("hidden");
@@ -166,7 +198,7 @@ document.getElementById("use-item-btn").addEventListener("click", () => {
 
 attackBtn.addEventListener('click', () => {
   if(!currentEnemy) return;
-
+  runStats.turns++;
   // Player Attacks
   currentEnemy.hp -= player.attack;
   log(`You hit the ${currentEnemy.name} for ${player.attack} damage.`);
@@ -177,19 +209,28 @@ attackBtn.addEventListener('click', () => {
     log(`You defeated the ${currentEnemy.name} and gained ${currentEnemy.xp} XP!`);
     showFloatingText(`+${currentEnemy.xp} XP`, "xp");
     player.xp += currentEnemy.xp;
+    runStats.xpEarned += currentEnemy.xp;
+    runStats.kills++;
     checkLevelUp();
-    const droppedItem = items.healing_herb;
-    const existing = player.inventory.find(i => i.id === droppedItem.id);
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      player.inventory.push({id: droppedItem.id, quantity: 1});
+    if (currentEnemy.loot && currentEnemy.loot.length > 0) {
+      const dropId = currentEnemy.loot[Math.floor(Math.random() * currentEnemy.loot.length)];
+      const droppedItem = items[dropId];
+
+      if (droppedItem) {
+        const existing = player.inventory.find(i => i.id === droppedItem.id);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          player.inventory.push({id: droppedItem.id, quantity: 1});
+        }
+        log(`You found a ${droppedItem.name}!`);
+        showFloatingText(`+${droppedItem.name}`, "heal");
+      }
     }
-    log(`You found a $droppedItem.name!`);
-    showFloatingText(`+${droppedItem.name}`, "heal");
     updateInventory();
     currentEnemy = null;
     attackBtn.disabled = true;
+    fightBtn.disabled = false;
     updateUI();
     return;
   }
@@ -200,8 +241,11 @@ attackBtn.addEventListener('click', () => {
 
   if(player.hp <= 0) {
     player.hp = 0;
-    log(`The ${currentEnemy.name} strikes back and you fall in battle!`);
+    log(`You have fallen. Your journey ends here.`);
     attackBtn.disabled = true;
+    fightBtn.disabled = true;
+    restBtn.disabled = true;
+    showRunSummary();
     currentEnemy = null;
   } else {
     log(`The ${currentEnemy.name} strikes back for ${damage} damage!`);
@@ -210,7 +254,21 @@ attackBtn.addEventListener('click', () => {
   updateUI();
 });
 
+document.getElementById("new-run-btn").addEventListener("click", () => {
+  location.reload(); // simplest restart
+});
+
+function calculateScore(stats){
+  return(
+    (stats.kills || 0) * 10 +
+    (stats.xpEarned || 0) * 2 +
+    (stats.turns || 0) * 1 -
+    (stats.itemsUsed || 0) * 5
+  );
+}
+
 restBtn.addEventListener("click", () => {
+  runStats.turns++;
   if(currentEnemy) {
     log(`You can't rest while in combat!`);
     return;
