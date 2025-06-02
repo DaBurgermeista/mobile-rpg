@@ -1,0 +1,47 @@
+/* Mobile-first design */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #1e1e2f;
+  color: #eee;
+  padding: 1rem;
+  max-width: 480px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+#player-info {
+  background-color: #2a2a3f;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+#actions button {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 1rem;
+  background-color: #3c8dbc;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  color: white;
+}
+
+#log {
+  margin-top: 1rem;
+  background: #111;
+  padding: 0.75rem;
+  border-radius: 6px;
+  min-height: 60px;
+  font-size: 0.95rem;
+}
