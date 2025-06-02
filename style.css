@@ -26,6 +26,13 @@ header {
   margin-bottom: 1rem;
 }
 
+#enemy-info {
+  background-color: #3b2f2f;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
 #actions button {
   width: 100%;
   margin: 0.5rem 0;
