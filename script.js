@@ -16,6 +16,7 @@ const attackBtn = document.getElementById('attack-button');
 const restBtn = document.getElementById('rest-button');
 
 let currentEnemy = null;
+let selectedItemIndex = null;
 
 function updateUI() {
   levelEl.textContent = player.level;
@@ -119,7 +120,14 @@ function updateInventory() {
     const item = items[entry.id];
     const li = document.createElement("li");
     li.textContent = `${item.name} x${entry.quantity}`;
-    li.addEventListener("click", () => useItem(index));
+    li.addEventListener("click", () => {
+      selectedItemIndex = index;
+      const item = items[entry.id];
+      document.getElementById("item-detail-name").textContent = item.name;
+      document.getElementById("item-detail-desc").textContent = item.description;
+      document.getElementById("item-detail").classList.remove("hidden");
+    });
+
     list.appendChild(li);
   });
 }
@@ -144,6 +152,17 @@ function useItem(index) {
   updateInventory();
 }
 
+document.getElementById("close-item-btn").addEventListener("click", () => {
+  document.getElementById("item-detail").classList.add("hidden");
+});
+
+document.getElementById("use-item-btn").addEventListener("click", () => {
+  if (selectedItemIndex !== null) {
+    useItem(selectedItemIndex);
+    document.getElementById("item-detail").classList.add("hidden");
+    selectedItemIndex = null;
+  }
+});
 
 attackBtn.addEventListener('click', () => {
   if(!currentEnemy) return;
@@ -204,3 +223,4 @@ restBtn.addEventListener("click", () => {
 
 updateUI();
 updateInventory();
+document.getElementById("item-detail").classList.add("hidden");
