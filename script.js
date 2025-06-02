@@ -95,16 +95,33 @@ function spawnParticles(count = 12) {
   }
 }
 
+function showFloatingText(text, type = "xp") {
+  const container = document.getElementById('float-effects');
+  const float = document.createElement("div");
+
+  float.className = `floating-text ${type}`;
+  float.textContent = text;
+
+  float.style.left = `${Math.random() * 70 + 15}%`;
+  float.style.top = `${Math.random() *60 + 20}%`;
+
+  container.appendChild(float);
+
+  setTimeout(() => float.remove(), 1000);
+}
+
 attackBtn.addEventListener('click', () => {
   if(!currentEnemy) return;
 
   // Player Attacks
   currentEnemy.hp -= player.attack;
   log(`You hit the ${currentEnemy.name} for ${player.attack} damage.`);
+  showFloatingText(`-${player.attack} HP`, "damage");
 
   // Enemy defeated?
   if (currentEnemy.hp <= 0){
     log(`You defeated the ${currentEnemy.name} and gained ${currentEnemy.xp} XP!`);
+    showFloatingText(`+${currentEnemy.xp} XP`, "xp");
     player.xp += currentEnemy.xp;
     checkLevelUp();
     currentEnemy = null;
@@ -134,6 +151,7 @@ restBtn.addEventListener("click", () => {
     log(`You can't rest while in combat!`);
     return;
   }
+  showFloatingText(`+${player.maxHp - player.hp} HP`, "heal");
   player.hp = player.maxHp;
   log(`💤 You feel rested.`);
   updateUI();

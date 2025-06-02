@@ -96,6 +96,48 @@ header {
   pointer-events: none;
 }
 
+#float-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.floating-text {
+  position: absolute;
+  font-weight: bold;
+  font-size: 1.3rem;
+  opacity: 1;
+  transform: translateY(0);
+  animation: floatUpFade 1s ease-out forwards;
+}
+
+.floating-text.damage {
+  color: red;
+}
+
+.floating-text.xp {
+  color: gold;
+}
+
+.floating-text.heal {
+  color: green;
+}
+
+@keyframes floatUpFade {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}
+
 @keyframes float-up {
   0% {
     transform: translateY(0) scale(1);
