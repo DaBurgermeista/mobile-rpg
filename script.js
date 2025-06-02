@@ -1,6 +1,7 @@
 import { player } from "./data/player.js";
 import { enemies } from "./data/enemies.js";
 
+const levelEl = document.getElementById('player-level');
 const nameEl = document.getElementById('player-name');
 const hpEl = document.getElementById('player-hp');
 const xpEl = document.getElementById('player-xp');
@@ -16,9 +17,10 @@ const restBtn = document.getElementById('rest-button');
 let currentEnemy = null;
 
 function updateUI() {
+  levelEl.textContent = player.level;
   nameEl.textContent = player.name;
-  hpEl.textContent = player.hp;
-  xpEl.textContent = player.xp;
+  hpEl.textContent = `${player.hp}/${player.maxHp}`;
+  xpEl.textContent = `${player.xp}/${player.xpToNext}`;
 
   if (currentEnemy){
     enemyNameEl.textContent = currentEnemy.name;
@@ -42,6 +44,21 @@ fightBtn.addEventListener("click", () => {
   updateUI();
 });
 
+function checkLevelUp(){
+  while (player.xp >= player.xpToNext) {
+    player.xp -= player.xpToNext;
+    player.level += 1;
+    player.attack += 1;
+    player.maxHp += 5;
+    player.hp = player.maxHp;
+
+    // Increase next level XP threshold
+    player.xpToNext = Math.floor(player.xpToNext * 1.5);
+
+    log(`You leveled up to level ${player.level}! +1 Attack, +5 Max HP!`);
+  }
+}
+
 attackBtn.addEventListener('click', () => {
   if(!currentEnemy) return;
 
@@ -53,6 +70,7 @@ attackBtn.addEventListener('click', () => {
   if (currentEnemy.hp <= 0){
     log(`You defeated the ${currentEnemy.name} and gained ${currentEnemy.xp} XP!`);
     player.xp += currentEnemy.xp;
+    checkLevelUp();
     currentEnemy = null;
     attackBtn.disabled = true;
     updateUI();
