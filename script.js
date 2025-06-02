@@ -1,5 +1,6 @@
 import { player } from "./data/player.js";
 import { enemies } from "./data/enemies.js";
+import { items } from "./data/items.js";
 
 const levelEl = document.getElementById('player-level');
 const nameEl = document.getElementById('player-name');
@@ -110,6 +111,40 @@ function showFloatingText(text, type = "xp") {
   setTimeout(() => float.remove(), 1000);
 }
 
+function updateInventory() {
+  const list = document.getElementById('inventory-list');
+  list.innerHTML = "";
+
+  player.inventory.forEach((entry, index) => {
+    const item = items[entry.id];
+    const li = document.createElement("li");
+    li.textContent = `${item.name} x${entry.quantity}`;
+    li.addEventListener("click", () => useItem(index));
+    list.appendChild(li);
+  });
+}
+
+function useItem(index) {
+  const entry = player.inventory[index];
+  const item = items[entry.id];
+
+  if (item.effect === "heal") {
+    const amount = Math.min(item.value, player.maxHp - player.hp);
+    player.hp += amount;
+    log(`🩹 You used ${item.name} and recovered ${amount} HP.`);
+    showFloatingText(`+${amount} HP`, "heal");
+  }
+
+  entry.quantity -= 1;
+  if (entry.quantity <= 0) {
+    player.inventory.splice(index, 1);
+  }
+
+  updateUI();
+  updateInventory();
+}
+
+
 attackBtn.addEventListener('click', () => {
   if(!currentEnemy) return;
 
@@ -124,6 +159,16 @@ attackBtn.addEventListener('click', () => {
     showFloatingText(`+${currentEnemy.xp} XP`, "xp");
     player.xp += currentEnemy.xp;
     checkLevelUp();
+    const droppedItem = items.healing_herb;
+    const existing = player.inventory.find(i => i.id === droppedItem.id);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      player.inventory.push({id: droppedItem.id, quantity: 1});
+    }
+    log(`You found a $droppedItem.name!`);
+    showFloatingText(`+${droppedItem.name}`, "heal");
+    updateInventory();
     currentEnemy = null;
     attackBtn.disabled = true;
     updateUI();
@@ -158,3 +203,4 @@ restBtn.addEventListener("click", () => {
 });
 
 updateUI();
+updateInventory();

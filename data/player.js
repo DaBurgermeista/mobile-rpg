@@ -7,4 +7,5 @@ export const player = {
     xp: 0,
     xpToNext: 20,
     attack: 3,
+    inventory: [],
 }

@@ -12,5 +12,12 @@ export const enemies = [
         hp: 8,
         attack: 3,
         xp: 7,
+    },
+    {
+        id: 'slime',
+        name: 'Slime',
+        hp: 10,
+        attack: 1,
+        xp: 6,
     }
 ]

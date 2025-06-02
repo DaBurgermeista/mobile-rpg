@@ -44,6 +44,19 @@ header {
   color: white;
 }
 
+#inventory {
+  margin-top: 1rem;
+  background: #222;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+#inventory-list {
+  padding: 0.25rem 0;
+  cursor: pointer;
+  color: lightgreen;
+}
+
 #log {
   margin-top: 1rem;
   background: #111;
